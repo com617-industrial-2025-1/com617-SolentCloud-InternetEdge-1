@@ -1,18 +1,21 @@
 en
 conf t
+
+! Initial Config
 hostname R6
 ip routing
 ip domain name solent.cloud
-
 username admin privilege 15 secret cisco123
-crypto key generate rsa modulus 2048
 
+! SSH Config
+crypto key generate rsa modulus 2048
 ip ssh version 2
 line vty 0 4
  login local
  transport input ssh
  exit
 
+! Interfaces Config
 interface GigabitEthernet1/0/1
  no switchport
  description Link to R2 G1/0/4
@@ -25,10 +28,11 @@ interface GigabitEthernet1/0/2
  ip address 192.168.1.6 255.255.255.252
  no shutdown
 
+! BGP Config
 router bgp 65000
  bgp router-id 6.6.6.6
  neighbor 192.168.1.5 remote-as 65000
  neighbor 192.168.1.13 remote-as 65000
- 
+
 end
 wr
