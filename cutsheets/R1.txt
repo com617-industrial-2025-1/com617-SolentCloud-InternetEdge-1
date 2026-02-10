@@ -1,0 +1,32 @@
+hostname R1
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+!
+interface GigabitEthernet1/0/4
+ description Link to R5 (Red Zone)
+ ip address 192.168.1.1 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet1/0/5
+ description Link to R6 (Red Zone)
+ ip address 192.168.1.5 255.255.255.252
+ no shutdown
+!
+router ospf 1
+ network 1.1.1.1 0.0.0.0 area 0
+!
+router bgp 65000
+ bgp router-id 1.1.1.1
+ ! Peering with OSPF neighbors via Loopback
+ neighbor 2.2.2.2 remote-as 65000
+ neighbor 2.2.2.2 update-source Loopback0
+ neighbor 3.3.3.3 remote-as 65000
+ neighbor 3.3.3.3 update-source Loopback0
+ neighbor 4.4.4.4 remote-as 65000
+ neighbor 4.4.4.4 update-source Loopback0
+ ! Peering with BGP-only neighbors via Physical Interface
+ neighbor 192.168.1.2 remote-as 65000
+ neighbor 192.168.1.6 remote-as 65000
+end
+wr
