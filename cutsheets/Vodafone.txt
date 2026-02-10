@@ -1,0 +1,27 @@
+en
+conf t
+hostname Vodafone
+ip routing
+ip domain name vodafone.com
+
+username admin privilege 15 secret cisco123
+crypto key generate rsa modulus 2048
+ip ssh version 2
+line vty 0 4
+ login local
+ transport input ssh
+ exit
+
+interface GigabitEthernet1/0/1
+ description Link to R5 G1/0/3
+ ip address 82.10.10.2 255.255.255.252
+ no shutdown
+
+router bgp 5378
+ bgp router-id 8.8.8.8
+ neighbor 82.10.10.1 remote-as 65000
+ ! Example: Advertising a public prefix
+ network 82.20.20.0 mask 255.255.255.0
+
+end
+wr
