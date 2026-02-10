@@ -10,18 +10,19 @@ line vty 0 4
  login local
  transport input ssh
  exit
-!
+
 interface GigabitEthernet1/0/1
- description Link to R1
- ip address 192.168.1.6 255.255.255.252
- no shutdown
-!
-interface GigabitEthernet1/0/2
- description Link to R2
+ description Link to R2 G1/0/4
  ip address 192.168.1.14 255.255.255.252
  no shutdown
-!
+interface GigabitEthernet1/0/2
+ description Link to R1 G1/0/5
+ ip address 192.168.1.6 255.255.255.252
+ no shutdown
+
 router bgp 65000
  bgp router-id 6.6.6.6
  neighbor 192.168.1.5 remote-as 65000
  neighbor 192.168.1.13 remote-as 65000
+end
+wr

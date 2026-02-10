@@ -4,7 +4,6 @@ hostname R1
 ip routing
 ip domain name solent.cloud
 username admin privilege 15 secret cisco123
-
 crypto key generate rsa modulus 2048
 ip ssh version 2
 line vty 0 4
@@ -12,43 +11,32 @@ line vty 0 4
  transport input ssh
  exit
 
-! --- Physical Interfaces (OSPF Zone) ---
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+
 interface GigabitEthernet1/0/1
- no switchport
  description Link to R2
  ip address 192.168.0.1 255.255.255.252
  no shutdown
-
 interface GigabitEthernet1/0/2
- no switchport
  description Link to R3
  ip address 192.168.0.9 255.255.255.252
  no shutdown
-
 interface GigabitEthernet1/0/3
- no switchport
  description Link to R4
  ip address 192.168.0.17 255.255.255.252
  no shutdown
 
-! --- Physical Interfaces (BGP-Only Zone) ---
+! --- New Connections to R5/R6 ---
 interface GigabitEthernet1/0/4
- no switchport
- description Link to R5
+ description Link to R5 G1/0/1
  ip address 192.168.1.1 255.255.255.252
  no shutdown
-
 interface GigabitEthernet1/0/5
- no switchport
- description Link to R6
+ description Link to R6 G1/0/2
  ip address 192.168.1.5 255.255.255.252
  no shutdown
 
-! --- Loopback for BGP Peering ---
-interface Loopback0
- ip address 1.1.1.1 255.255.255.255
-
-! --- OSPF Configuration ---
 router ospf 1
  router-id 1.1.1.1
  network 192.168.0.0 0.0.0.3 area 0
@@ -56,20 +44,18 @@ router ospf 1
  network 192.168.0.16 0.0.0.3 area 0
  network 1.1.1.1 0.0.0.0 area 0
 
-! --- iBGP Configuration (AS 65000) ---
 router bgp 65000
  bgp router-id 1.1.1.1
- ! Neighbor R2 (Standard Peer)
+ ! Core Peering
  neighbor 2.2.2.2 remote-as 65000
  neighbor 2.2.2.2 update-source Loopback0
- ! Neighbors R3 & R4 (Peering via Loopback + Route Reflector Clients)
  neighbor 3.3.3.3 remote-as 65000
  neighbor 3.3.3.3 update-source Loopback0
  neighbor 3.3.3.3 route-reflector-client
  neighbor 4.4.4.4 remote-as 65000
  neighbor 4.4.4.4 update-source Loopback0
  neighbor 4.4.4.4 route-reflector-client
- ! Neighbors R5 & R6 (Peering via Physical IP + Route Reflector Clients)
+ ! Red Zone Peering (Physical)
  neighbor 192.168.1.2 remote-as 65000
  neighbor 192.168.1.2 route-reflector-client
  neighbor 192.168.1.6 remote-as 65000
