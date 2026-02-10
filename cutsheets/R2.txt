@@ -12,27 +12,33 @@ line vty 0 4
  exit
 
 interface Loopback0
+ no switchport
  ip address 2.2.2.2 255.255.255.255
 
 interface GigabitEthernet1/0/1
+ no switchport
  description Link to R1
  ip address 192.168.0.2 255.255.255.252
  no shutdown
 interface GigabitEthernet1/0/2
+ no switchport
  description Link to R4
  ip address 192.168.0.5 255.255.255.252
  no shutdown
 interface GigabitEthernet1/0/3
+ no switchport
  description Link to R3
  ip address 192.168.0.14 255.255.255.252
  no shutdown
 
 ! --- New Connections to R5/R6 ---
 interface GigabitEthernet1/0/4
+ no switchport
  description Link to R6 G1/0/1
  ip address 192.168.1.13 255.255.255.252
  no shutdown
 interface GigabitEthernet1/0/5
+ no switchport
  description Link to R5 G1/0/2
  ip address 192.168.1.9 255.255.255.252
  no shutdown

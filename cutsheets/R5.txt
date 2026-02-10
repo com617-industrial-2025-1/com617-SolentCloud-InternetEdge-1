@@ -12,10 +12,12 @@ line vty 0 4
  exit
 
 interface GigabitEthernet1/0/1
+ no switchport
  description Link to R1 G1/0/4
  ip address 192.168.1.2 255.255.255.252
  no shutdown
 interface GigabitEthernet1/0/2
+ no switchport
  description Link to R2 G1/0/5
  ip address 192.168.1.10 255.255.255.252
  no shutdown
