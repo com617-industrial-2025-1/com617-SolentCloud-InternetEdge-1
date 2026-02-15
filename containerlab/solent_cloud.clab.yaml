@@ -1,0 +1,64 @@
+name: ixp-te-lab
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:24.10
+
+  nodes:
+
+    # -------------------
+    # EDGE ROUTERS (Red Zone / External BGP)
+    # -------------------
+    edge_router_1:
+      kind: nokia_srlinux
+      startup-config: ./configs/edge_router_1.cli
+
+    edge_router_2:
+      kind: nokia_srlinux
+      startup-config: ./configs/edge_router_2.cli
+
+    # -------------------
+    # CORE ROUTERS (AS65000 - OSPF & BGP)
+    # -------------------
+    core_router_1:
+      kind: nokia_srlinux
+      startup-config: ./configs/core_router_1.cli
+
+    core_router_2:
+      kind: nokia_srlinux
+      startup-config: ./configs/core_router_2.cli
+
+    # -------------------
+    # DC ROUTERS (OSPF Only)
+    # -------------------
+    dc_router_1:
+      kind: nokia_srlinux
+      startup-config: ./configs/dc_router_1.cli
+
+    dc_router_2:
+      kind: nokia_srlinux
+      startup-config: ./configs/dc_router_2.cli
+
+  links:
+
+    # -------------------
+    # CORE <-> CORE (OSPF)
+    # -------------------
+    - endpoints: ["core_router_1:e1-1", "core_router_2:e1-1"]
+
+    # -------------------
+    # CORE <-> DC (OSPF)
+    # -------------------
+    - endpoints: ["core_router_1:e1-2", "dc_router_1:e1-1"]
+    - endpoints: ["core_router_1:e1-3", "dc_router_2:e1-1"]
+    - endpoints: ["core_router_2:e1-2", "dc_router_1:e1-2"]
+    - endpoints: ["core_router_2:e1-3", "dc_router_2:e1-2"]
+
+    # -------------------
+    # EDGE <-> CORE (iBGP over loopbacks, physical transport only)
+    # -------------------
+    - endpoints: ["edge_router_1:e1-1", "core_router_1:e1-4"]
+    - endpoints: ["edge_router_1:e1-2", "core_router_2:e1-4"]
+    - endpoints: ["edge_router_2:e1-1", "core_router_1:e1-5"]
+    - endpoints: ["edge_router_2:e1-2", "core_router_2:e1-5"]
