@@ -1,0 +1,9 @@
+enter candidate
+set / system name host-name isp-vmo2
+set / interface ethernet-1/1 admin-state enable subinterface 0 ipv4 admin-state enable address 10.2.2.1/30
+set / routing-policy policy ACCEPT-ALL default-action policy-result accept
+set / network-instance default interface ethernet-1/1.0
+set / network-instance default protocols bgp autonomous-system 5089 router-id 10.2.2.1 afi-safi ipv4-unicast admin-state enable
+set / network-instance default protocols bgp group EBGP peer-as 65000 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+set / network-instance default protocols bgp neighbor 10.2.2.2 peer-group EBGP
+commit save

@@ -1,64 +1,76 @@
 name: ixp-te-lab
-
 topology:
   kinds:
     nokia_srlinux:
       image: ghcr.io/nokia/srlinux:24.10
-
   nodes:
-
-    # -------------------
-    # EDGE ROUTERS (Red Zone / External BGP)
-    # -------------------
-    edge_router_1:
-      kind: nokia_srlinux
-      startup-config: ./configs/edge_router_1.cli
-
-    edge_router_2:
-      kind: nokia_srlinux
-      startup-config: ./configs/edge_router_2.cli
-
-    # -------------------
-    # CORE ROUTERS (AS65000 - OSPF & BGP)
-    # -------------------
     core_router_1:
       kind: nokia_srlinux
       startup-config: ./configs/core_router_1.cli
-
     core_router_2:
       kind: nokia_srlinux
       startup-config: ./configs/core_router_2.cli
-
-    # -------------------
-    # DC ROUTERS (OSPF Only)
-    # -------------------
     dc_router_1:
       kind: nokia_srlinux
       startup-config: ./configs/dc_router_1.cli
-
     dc_router_2:
       kind: nokia_srlinux
       startup-config: ./configs/dc_router_2.cli
+    edge_router_1:
+      kind: nokia_srlinux
+      startup-config: ./configs/edge_router_1.cli
+    edge_router_2:
+      kind: nokia_srlinux
+      startup-config: ./configs/edge_router_2.cli
+    isp_bt:
+      kind: nokia_srlinux
+      startup-config: ./configs/isp_bt.cli
+    isp_vmo2:
+      kind: nokia_srlinux
+      startup-config: ./configs/isp_vmo2.cli
+
+    # Official FRR Image - No internet needed at boot
+    ixp_lon:
+      kind: linux
+      image: frrouting/frr:latest
+      exec:
+        - ip link add br0 type bridge
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set br0 up
+        - ip addr add 185.1.1.254/24 dev br0
+        - sed -i 's/bgpd=no/bgpd=yes/' /etc/frr/daemons
+        - /usr/lib/frr/frrinit.sh restart
+        - sleep 2
+        - vtysh -c "conf t" -c "router bgp 65500" -c "no bgp ebgp-requires-policy" -c "neighbor 185.1.1.5 remote-as 65000" -c "neighbor 185.1.1.6 remote-as 65000"
+
+    ixp_man:
+      kind: linux
+      image: frrouting/frr:latest
+      exec:
+        - ip link add br0 type bridge
+        - ip link set eth1 master br0
+        - ip link set eth2 master br0
+        - ip link set br0 up
+        - ip addr add 185.2.2.254/24 dev br0
+        - sed -i 's/bgpd=no/bgpd=yes/' /etc/frr/daemons
+        - /usr/lib/frr/frrinit.sh restart
+        - sleep 2
+        - vtysh -c "conf t" -c "router bgp 65501" -c "no bgp ebgp-requires-policy" -c "neighbor 185.2.2.5 remote-as 65000" -c "neighbor 185.2.2.6 remote-as 65000"
 
   links:
-
-    # -------------------
-    # CORE <-> CORE (OSPF)
-    # -------------------
     - endpoints: ["core_router_1:e1-1", "core_router_2:e1-1"]
-
-    # -------------------
-    # CORE <-> DC (OSPF)
-    # -------------------
     - endpoints: ["core_router_1:e1-2", "dc_router_1:e1-1"]
     - endpoints: ["core_router_1:e1-3", "dc_router_2:e1-1"]
     - endpoints: ["core_router_2:e1-2", "dc_router_1:e1-2"]
     - endpoints: ["core_router_2:e1-3", "dc_router_2:e1-2"]
-
-    # -------------------
-    # EDGE <-> CORE (iBGP over loopbacks, physical transport only)
-    # -------------------
     - endpoints: ["edge_router_1:e1-1", "core_router_1:e1-4"]
     - endpoints: ["edge_router_1:e1-2", "core_router_2:e1-4"]
     - endpoints: ["edge_router_2:e1-1", "core_router_1:e1-5"]
     - endpoints: ["edge_router_2:e1-2", "core_router_2:e1-5"]
+    - endpoints: ["edge_router_1:e1-3", "isp_bt:e1-1"]
+    - endpoints: ["edge_router_2:e1-3", "isp_vmo2:e1-1"]
+    - endpoints: ["edge_router_1:e1-4", "ixp_lon:eth1"]
+    - endpoints: ["edge_router_2:e1-4", "ixp_lon:eth2"]
+    - endpoints: ["edge_router_1:e1-5", "ixp_man:eth1"]
+    - endpoints: ["edge_router_2:e1-5", "ixp_man:eth2"]
