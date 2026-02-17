@@ -25,4 +25,6 @@ set / network-instance default protocols bgp group EBGP-BT peer-as 2856 export-p
 set / network-instance default protocols bgp neighbor 10.1.1.1 peer-group EBGP-BT
 set / network-instance default protocols bgp group IXP-LON peer-as 65500 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 185.1.1.254 peer-group IXP-LON
+set / network-instance default protocols bgp group IXP-MAN peer-as 65501 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+set / network-instance default protocols bgp neighbor 185.2.2.254 peer-group IXP-MAN
 commit save
