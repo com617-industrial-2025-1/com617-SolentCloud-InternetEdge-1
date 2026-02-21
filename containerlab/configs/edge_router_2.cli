@@ -6,25 +6,40 @@ set / interface ethernet-1/2 admin-state enable subinterface 0 ipv4 admin-state 
 set / interface ethernet-1/3 admin-state enable subinterface 0 ipv4 admin-state enable address 10.2.2.2/30
 set / interface ethernet-1/4 admin-state enable subinterface 0 ipv4 admin-state enable address 185.1.1.6/24
 set / interface ethernet-1/5 admin-state enable subinterface 0 ipv4 admin-state enable address 185.2.2.6/24
+
 set / routing-policy policy ACCEPT-ALL default-action policy-result accept
+set / routing-policy policy ACCEPT-ALL statement 20 match protocol ospfv2
+set / routing-policy policy ACCEPT-ALL statement 20 action policy-result accept
+
+set / routing-policy policy SET-LOCAL-PREF-200 default-action policy-result accept
+set / routing-policy policy SET-LOCAL-PREF-200 default-action bgp local-preference set 200
+
+set / routing-policy policy PREPEND-AS-65000 default-action policy-result accept
+set / routing-policy policy PREPEND-AS-65000 default-action bgp as-path prepend as-number 65000 repeat-n 2
+
 set / network-instance default interface system0.0
 set / network-instance default interface ethernet-1/1.0
 set / network-instance default interface ethernet-1/2.0
 set / network-instance default interface ethernet-1/3.0
 set / network-instance default interface ethernet-1/4.0
 set / network-instance default interface ethernet-1/5.0
+
 set / network-instance default protocols ospf instance 1 admin-state enable version ospf-v2 router-id 6.6.6.6
 set / network-instance default protocols ospf instance 1 area 0.0.0.0 interface system0.0 admin-state enable
 set / network-instance default protocols ospf instance 1 area 0.0.0.0 interface ethernet-1/1.0 interface-type point-to-point admin-state enable
 set / network-instance default protocols ospf instance 1 area 0.0.0.0 interface ethernet-1/2.0 interface-type point-to-point admin-state enable
+
 set / network-instance default protocols bgp autonomous-system 65000 router-id 6.6.6.6 afi-safi ipv4-unicast admin-state enable
 set / network-instance default protocols bgp group IBGP peer-as 65000 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ] transport local-address 6.6.6.6
 set / network-instance default protocols bgp neighbor 1.1.1.1 peer-group IBGP
 set / network-instance default protocols bgp neighbor 2.2.2.2 peer-group IBGP
-set / network-instance default protocols bgp group EBGP-VMO2 peer-as 5089 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+
+set / network-instance default protocols bgp group EBGP-VMO2 peer-as 5089 export-policy [ PREPEND-AS-65000 ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 10.2.2.1 peer-group EBGP-VMO2
-set / network-instance default protocols bgp group IXP-LON peer-as 65500 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+
+set / network-instance default protocols bgp group IXP-LON peer-as 65500 export-policy [ ACCEPT-ALL ] import-policy [ SET-LOCAL-PREF-200 ]
 set / network-instance default protocols bgp neighbor 185.1.1.254 peer-group IXP-LON
-set / network-instance default protocols bgp group IXP-MAN peer-as 65501 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+
+set / network-instance default protocols bgp group IXP-MAN peer-as 65501 export-policy [ ACCEPT-ALL ] import-policy [ SET-LOCAL-PREF-200 ]
 set / network-instance default protocols bgp neighbor 185.2.2.254 peer-group IXP-MAN
 commit save

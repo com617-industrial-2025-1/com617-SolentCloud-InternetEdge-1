@@ -37,11 +37,11 @@ topology:
         - ./configs/ixp_lon/frr.conf:/etc/frr/frr.conf
       exec:
         - sleep 3
-        - ip link add br0 type bridge || true
+        - sh -c 'ip link add br0 type bridge || true'
         - ip link set eth1 master br0
         - ip link set eth2 master br0
         - ip link set br0 up
-        - ip addr add 185.1.1.254/24 dev br0 || true
+        - sh -c 'ip addr add 185.1.1.254/24 dev br0 || true'
 
     ixp_man:
       kind: linux
@@ -51,12 +51,28 @@ topology:
         - ./configs/ixp_man/frr.conf:/etc/frr/frr.conf
       exec:
         - sleep 3
-        - ip link add br0 type bridge || true
+        - sh -c 'ip link add br0 type bridge || true'
         - ip link set eth1 master br0
         - ip link set eth2 master br0
         - ip link set br0 up
-        - ip addr add 185.2.2.254/24 dev br0 || true
+        - sh -c 'ip addr add 185.2.2.254/24 dev br0 || true'
+    dc_server:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      exec:
+        - ip addr add 172.16.1.10/24 dev eth1
+        - ip addr add 172.16.2.10/24 dev eth2
+        - ip route replace default via 172.16.1.1
 
+    internet_client:
+      kind: linux
+      image: ghcr.io/hellt/network-multitool
+      exec:
+        - ip addr add 8.8.8.2/24 dev eth1        # ISP BT subnet
+        - ip addr add 9.9.9.2/24 dev eth2        # ISP VMO2 subnet
+        - ip addr add 185.1.1.100/24 dev eth3    # IXP-LON subnet
+        - ip addr add 185.2.2.100/24 dev eth4    # IXP-MAN subnet
+        - ip route add 172.16.0.0/16 via 185.1.1.5
   links:
     - endpoints: ["core_router_1:e1-1", "core_router_2:e1-1"]
     - endpoints: ["core_router_1:e1-2", "dc_router_1:e1-1"]
@@ -73,3 +89,9 @@ topology:
     - endpoints: ["edge_router_2:e1-4", "ixp_lon:eth2"]
     - endpoints: ["edge_router_1:e1-5", "ixp_man:eth1"]
     - endpoints: ["edge_router_2:e1-5", "ixp_man:eth2"]
+    - endpoints: ["dc_router_1:e1-3", "dc_server:eth1"]
+    - endpoints: ["dc_router_2:e1-3", "dc_server:eth2"]
+    - endpoints: ["isp_bt:e1-2", "internet_client:eth1"]
+    - endpoints: ["isp_vmo2:e1-2", "internet_client:eth2"]
+    - endpoints: ["ixp_lon:eth3", "internet_client:eth3"]
+    - endpoints: ["ixp_man:eth3", "internet_client:eth4"]

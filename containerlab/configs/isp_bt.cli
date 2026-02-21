@@ -1,8 +1,13 @@
 enter candidate
 set / system name host-name isp-bt
 set / interface ethernet-1/1 admin-state enable subinterface 0 ipv4 admin-state enable address 10.1.1.1/30
+set / interface ethernet-1/2 admin-state enable subinterface 0 ipv4 admin-state enable address 8.8.8.1/24
+
 set / routing-policy policy ACCEPT-ALL default-action policy-result accept
+
 set / network-instance default interface ethernet-1/1.0
+set / network-instance default interface ethernet-1/2.0
+
 set / network-instance default protocols bgp autonomous-system 2856 router-id 10.1.1.1 afi-safi ipv4-unicast admin-state enable
 set / network-instance default protocols bgp group EBGP peer-as 65000 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 10.1.1.2 peer-group EBGP
