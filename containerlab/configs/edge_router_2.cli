@@ -33,6 +33,8 @@ set / network-instance default protocols bgp autonomous-system 65000 router-id 6
 set / network-instance default protocols bgp group IBGP peer-as 65000 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ] transport local-address 6.6.6.6
 set / network-instance default protocols bgp neighbor 1.1.1.1 peer-group IBGP
 set / network-instance default protocols bgp neighbor 2.2.2.2 peer-group IBGP
+set / network-instance default protocols bgp neighbor 3.3.3.3 peer-group IBGP
+set / network-instance default protocols bgp neighbor 4.4.4.4 peer-group IBGP
 
 set / network-instance default protocols bgp group EBGP-VMO2 peer-as 5089 export-policy [ PREPEND-AS-65000 ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 10.2.2.1 peer-group EBGP-VMO2
