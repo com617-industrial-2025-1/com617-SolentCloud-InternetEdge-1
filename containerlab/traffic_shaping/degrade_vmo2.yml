@@ -1,0 +1,15 @@
+---
+- name: Traffic Engineering - Degrade VMO2 ISP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Inject DEGRADE policy on Edge Router 2
+      ansible.builtin.shell: |
+        docker exec -i clab-ixp-te-lab-edge_router_2 sr_cli <<EOF
+        enter candidate
+        set / routing-policy policy DEGRADE-ROUTE default-action policy-result accept
+        set / routing-policy policy DEGRADE-ROUTE default-action bgp local-preference set 50
+        set / routing-policy policy DEGRADE-ROUTE default-action bgp as-path prepend as-number 65000 repeat-n 3
+        set / network-instance default protocols bgp group EBGP-VMO2 export-policy [ DEGRADE-ROUTE ] import-policy [ DEGRADE-ROUTE ]
+        commit save
+        EOF

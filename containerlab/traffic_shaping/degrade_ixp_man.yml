@@ -1,0 +1,17 @@
+---
+- name: Traffic Engineering - Degrade Manchester IXP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Degrade IXP-MAN on Both Edge Routers
+      ansible.builtin.shell: |
+        for router in edge_router_1 edge_router_2; do
+          docker exec -i clab-ixp-te-lab-$router sr_cli <<EOF
+          enter candidate
+          set / routing-policy policy DEGRADE-ROUTE default-action policy-result accept
+          set / routing-policy policy DEGRADE-ROUTE default-action bgp local-preference set 50
+          set / routing-policy policy DEGRADE-ROUTE default-action bgp as-path prepend as-number 65000 repeat-n 3
+          set / network-instance default protocols bgp group IXP-MAN export-policy [ DEGRADE-ROUTE ] import-policy [ DEGRADE-ROUTE ]
+          commit save
+        EOF
+        done

@@ -1,0 +1,18 @@
+---
+- name: Traffic Engineering - Restore BT ISP Route
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Restore ACCEPT-ALL policy on Edge Router 1
+      ansible.builtin.shell: |
+        docker exec -i clab-ixp-te-lab-edge_router_1 sr_cli <<EOF
+        enter candidate
+        # Revert the BT ISP group back to normal routing
+        set / network-instance default protocols bgp group EBGP-BT export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+        commit save
+        EOF
+      register: cli_output
+
+    - name: Display Router Output
+      ansible.builtin.debug:
+        msg: "{{ cli_output.stdout_lines }}"

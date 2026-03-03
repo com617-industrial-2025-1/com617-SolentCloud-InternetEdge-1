@@ -1,0 +1,12 @@
+---
+- name: Traffic Engineering - Restore VMO2 ISP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Restore ACCEPT-ALL on Edge Router 2
+      ansible.builtin.shell: |
+        docker exec -i clab-ixp-te-lab-edge_router_2 sr_cli <<EOF
+        enter candidate
+        set / network-instance default protocols bgp group EBGP-VMO2 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+        commit save
+        EOF

@@ -1,0 +1,14 @@
+---
+- name: Traffic Engineering - Restore London IXP
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Restore IXP-LON on Both Edge Routers
+      ansible.builtin.shell: |
+        for router in edge_router_1 edge_router_2; do
+          docker exec -i clab-ixp-te-lab-$router sr_cli <<EOF
+          enter candidate
+          set / network-instance default protocols bgp group IXP-LON export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
+          commit save
+        EOF
+        done

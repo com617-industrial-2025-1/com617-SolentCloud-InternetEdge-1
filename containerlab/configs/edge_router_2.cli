@@ -11,11 +11,7 @@ set / routing-policy policy ACCEPT-ALL default-action policy-result accept
 set / routing-policy policy ACCEPT-ALL statement 20 match protocol ospfv2
 set / routing-policy policy ACCEPT-ALL statement 20 action policy-result accept
 
-set / routing-policy policy SET-LOCAL-PREF-200 default-action policy-result accept
-set / routing-policy policy SET-LOCAL-PREF-200 default-action bgp local-preference set 200
 
-set / routing-policy policy PREPEND-AS-65000 default-action policy-result accept
-set / routing-policy policy PREPEND-AS-65000 default-action bgp as-path prepend as-number 65000 repeat-n 2
 
 set / network-instance default interface system0.0
 set / network-instance default interface ethernet-1/1.0
@@ -36,12 +32,12 @@ set / network-instance default protocols bgp neighbor 2.2.2.2 peer-group IBGP
 set / network-instance default protocols bgp neighbor 3.3.3.3 peer-group IBGP
 set / network-instance default protocols bgp neighbor 4.4.4.4 peer-group IBGP
 
-set / network-instance default protocols bgp group EBGP-VMO2 peer-as 5089 export-policy [ PREPEND-AS-65000 ] import-policy [ ACCEPT-ALL ]
+set / network-instance default protocols bgp group EBGP-VMO2 peer-as 5089 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 10.2.2.1 peer-group EBGP-VMO2
 
-set / network-instance default protocols bgp group IXP-LON peer-as 65500 export-policy [ ACCEPT-ALL ] import-policy [ SET-LOCAL-PREF-200 ]
+set / network-instance default protocols bgp group IXP-LON peer-as 65500 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 185.1.1.254 peer-group IXP-LON
 
-set / network-instance default protocols bgp group IXP-MAN peer-as 65501 export-policy [ ACCEPT-ALL ] import-policy [ SET-LOCAL-PREF-200 ]
+set / network-instance default protocols bgp group IXP-MAN peer-as 65501 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]
 set / network-instance default protocols bgp neighbor 185.2.2.254 peer-group IXP-MAN
 commit save
