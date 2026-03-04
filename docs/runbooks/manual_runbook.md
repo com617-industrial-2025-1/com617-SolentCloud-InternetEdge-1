@@ -15,10 +15,6 @@ This runbook provides the exact CLI commands to manually perform the BGP traffic
 | Moderate Packet Loss | Packet loss > 5% sustained for 1 minute | Packet loss < 2.5% sustained for 2 minutes |
 | Latency (RTT) Spikes | RTT exceeds > 10ms average over 30 seconds | RTT < 5ms average over 1 minute |
 | Jitter (Delay Variation) | Jitter variance > 5ms over a 30-second window | Jitter stabilizes to < 2ms for 2 minutes |
-| **C. Capacity & Hardware** | | |
-| Link Saturation | Egress utilization on any 25G link exceeds 85% for 3 minutes | Target link utilization drops below 70% for 5 minutes |
-| Router Resource Exhaustion| Cisco edge router CPU > 90% or Memory > 85% for 3 minutes | CPU < 60% and Memory < 70% for 5 minutes |
-
 
 # 2. Manual Execution Procedures
 
@@ -91,4 +87,5 @@ Once the "Revert" criteria are met, restore the ACCEPT-ALL policy to return to b
 | **BT ISP** | Edge Router 1 | `EBGP-BT` | `set / network-instance default protocols bgp group EBGP-BT export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]` |
 | **VMO2 ISP** | Edge Router 2 | `EBGP-VMO2` | `set / network-instance default protocols bgp group EBGP-VMO2 export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]` |
 | **London IXP** | Edge 1 & Edge 2 | `IXP-LON` | `set / network-instance default protocols bgp group IXP-LON export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]` |
+
 | **Manchester IXP** | Edge 1 & Edge 2 | `IXP-MAN` | `set / network-instance default protocols bgp group IXP-MAN export-policy [ ACCEPT-ALL ] import-policy [ ACCEPT-ALL ]` |
