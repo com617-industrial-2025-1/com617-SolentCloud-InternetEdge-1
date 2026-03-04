@@ -50,5 +50,5 @@
 
 - Two networks with two different equipment vendors/versions
 - Companies peer with both if they want additional availability to companies connected to both.
+- LON2 is cheaper as you can reach fewer networks from that exchange. Same with Manchester.
 
--LON2 is cheaper as you can reach fewer networks from that exchange. Same with Manchester.
