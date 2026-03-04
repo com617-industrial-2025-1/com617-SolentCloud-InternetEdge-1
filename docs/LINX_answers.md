@@ -11,7 +11,7 @@
 - Pricing on IXP is pay for package, no matter how little you use - then, you pay a surcharge for 'burst' traffic up to port speed (100Gbps) - you should pay for more than you use (50%-70%) to allow for traffic peaks. But you still pay for that bandwidth.
 - Mbps costs we found are fairly accurate.
 - 4.5c per Mbps is cheapest Mike @ Linx has seen.
-- IXP Pricing sheet[https://docs.google.com/spreadsheets/d/18ztPX_ysWYqEhJlf2SKQQsTNRbkwoxPSfaC6ScEZAG8/edit?gid=0#gid=0]
+- IXP Pricing sheet(https://docs.google.com/spreadsheets/d/18ztPX_ysWYqEhJlf2SKQQsTNRbkwoxPSfaC6ScEZAG8/edit?gid=0#gid=0)
 - LON1 and LON2 difference is just resiliency.
 
 ## Onboarding
@@ -21,7 +21,7 @@
 - IXP don't deal with connectivity - Customers do. They're available in most London DCs. SolentCloud will Need some equipment in London or Slough.
 - Establish peering to all networks we can available in exchange.
 - You can use a 'routeserver' (operated by IXP - any member can establish BGP with that server, and these routes will be advertised to other BGP peers with the server ~40% use this)
-- EVPN[https://www.juniper.net/documentation/us/en/software/junos/evpn/topics/concept/evpns-overview.html]
+- EVPN(https://www.juniper.net/documentation/us/en/software/junos/evpn/topics/concept/evpns-overview.html)
 
 ## IXP internal layout
 
@@ -50,4 +50,5 @@
 
 - Two networks with two different equipment vendors/versions
 - Companies peer with both if they want additional availability to companies connected to both.
+
 -LON2 is cheaper as you can reach fewer networks from that exchange. Same with Manchester.
